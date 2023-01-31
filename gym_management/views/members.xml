@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<odoo>
+    <record id="action_gym_member" model="ir.actions.act_window">
+        <field name="name">Afiliados</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="domain">[('gym_member','=','True')]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Agrega un nuevo cliente
+            </p>
+        </field>
+    </record>
+
+    <record id="view_member_form_inherit" model="ir.ui.view">
+        <field name="name">res.partner.inheriteds</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='vat']" position="after">
+                <field name="gym_member" />
+                <field name="membership_count" invisible="1"/>
+            </xpath>
+        </field>
+    </record>
+
+
+    <record id="res_partner_kanban_view" model="ir.ui.view">
+        <field name="name">res.partner.kanban.inheritzz</field>
+        <field name="model">res.partner</field>
+        <!--<field name="domain">[('gym_member','=','True')]</field>-->
+        <field name="inherit_id" ref="base.res_partner_kanban_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[hasclass('oe_kanban_partner_categories')]" position="replace">
+                <div>
+                    <div t-if="record.gym_member.raw_value">
+                        <field name="gym_member" invisible="1" />
+                        <div class = "font-weight-bold">Membresias :
+                            <field name="membership_count"/>
+                        </div>
+                    </div>
+                    <field name="membership_state" invisible="1"/>
+                    <div class="text-primary" t-if="record.membership_state.raw_value == 'none'">
+                        <span>Sin Membresía</span>
+                    </div>
+                    <div class="text-success" t-if="record.membership_state.raw_value == 'paid'">
+                        <span>Membresía Vigente</span>
+                    </div>
+                    <div class="text-warning" t-if="record.membership_state.raw_value == 'waiting'">
+                        <span>Membresia en espera</span>
+                    </div>
+                    <div class="text-danger" t-if="record.membership_state.raw_value == 'old'">
+                        <span>Membresía Vencida</span>
+                    </div>
+                    <div class="text-info" t-if="record.membership_state.raw_value == 'invoiced'">
+                        <span>Membresía Facturada</span>
+                    </div>
+                    <div class="text-primary" t-if="record.membership_state.raw_value == 'free'">
+                        <span>Membresía Gratis</span>
+                    </div>
+                </div>
+            </xpath>
+        </field>
+    </record>
+    <menuitem id="gym_member_root" name="Membresías" parent="gym_management_root" sequence="10"/>
+
+    <menuitem id="gym_member_menu" name="Clientes" parent="gym_member_root" action="action_gym_member" sequence="1"/>
+
+</odoo>
